@@ -27,6 +27,10 @@ func (us *UserStore) GetUserById(ctx context.Context, id int) (entity.User, erro
 	if err != nil {
 		return entity.User{}, err
 	}
+	defer func() {
+		conn.Conn().Close(ctx)
+		conn.Release()
+	}()
 	query := `select * from users where user_id=$1`
 	rows, err := conn.Query(ctx, query, id)
 	if err != nil {
